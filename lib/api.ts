@@ -1,0 +1,178 @@
+import axios from 'axios';
+import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
+
+// Create an axios instance with the base URL
+const api = axios.create({
+  baseURL:
+    process.env.EXPO_PUBLIC_API_URL || Constants.expoConfig?.extra?.apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add an interceptor to add the token to every request
+api.interceptors.request.use(async (config) => {
+  try {
+    const token = await SecureStore.getItemAsync('auth-token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (error) {
+    console.error('Error getting token', error);
+  }
+  return config;
+});
+
+// API functions for authentication
+export const authApi = {
+  login: async (email: string, password: string) => {
+    const response = await api.post('/users/login', { email, password });
+    return response.data;
+  },
+  register: async (userData: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    roomNumber?: string;
+    floor?: number;
+  }) => {
+    const response = await api.post('/users/register', userData);
+    return response.data;
+  },
+  getProfile: async () => {
+    const response = await api.get('/users/profile');
+    return response.data;
+  },
+  updateProfile: async (userData: {
+    name?: string;
+    phone?: string;
+    roomNumber?: string;
+    floor?: number;
+    password?: string;
+  }) => {
+    const response = await api.patch('/profile', userData);
+    return response.data;
+  },
+};
+
+// API functions for categories
+export const categoryApi = {
+  getAll: async () => {
+    const response = await api.get('/categories');
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await api.get(`/categories/${id}`);
+    return response.data;
+  },
+  create: async (data: {
+    name: string;
+    description?: string;
+    imageUrl?: string;
+  }) => {
+    const response = await api.post('/categories', data);
+    return response.data;
+  },
+  update: async (
+    id: string,
+    data: { name: string; description?: string; imageUrl?: string }
+  ) => {
+    const response = await api.patch(`/categories/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/categories/${id}`);
+    return response.data;
+  },
+};
+
+// API functions for products
+export const productApi = {
+  getAll: async (params?: { categoryId?: string; q?: string }) => {
+    const response = await api.get('/products', { params });
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  },
+  create: async (data: {
+    name: string;
+    description?: string;
+    price: number;
+    categoryId: string;
+    imageUrl?: string;
+    inStock?: boolean;
+  }) => {
+    const response = await api.post('/products', data);
+    return response.data;
+  },
+  update: async (
+    id: string,
+    data: {
+      name: string;
+      description?: string;
+      price: number;
+      categoryId: string;
+      imageUrl?: string;
+      inStock?: boolean;
+    }
+  ) => {
+    const response = await api.patch(`/products/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/products/${id}`);
+    return response.data;
+  },
+};
+
+// API functions for orders
+export const orderApi = {
+  getAll: async (params?: { status?: string }) => {
+    const response = await api.get('/orders', { params });
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await api.get(`/orders/${id}`);
+    return response.data;
+  },
+  create: async (data: {
+    items: { productId: string; quantity: number }[];
+    notes?: string;
+    confirmationDeadlineMinutes?: number;
+  }) => {
+    const response = await api.post('/orders', data);
+    return response.data;
+  },
+  updateStatus: async (
+    id: string,
+    data: {
+      status: string;
+      deliveryDeadlineMinutes?: number;
+    }
+  ) => {
+    const response = await api.patch(`/orders/${id}`, data);
+    return response.data;
+  },
+};
+
+// API functions for notifications
+export const notificationApi = {
+  getAll: async (params?: { unreadOnly?: boolean; limit?: number }) => {
+    const response = await api.get('/notifications', { params });
+    return response.data;
+  },
+  markAsRead: async (id: string) => {
+    const response = await api.patch(`/notifications/${id}`, { isRead: true });
+    return response.data;
+  },
+  markAllAsRead: async () => {
+    const response = await api.post('/notifications/mark-all-read');
+    return response.data;
+  },
+};
+
+export default api;
