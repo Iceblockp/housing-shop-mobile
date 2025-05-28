@@ -4,8 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Create an axios instance with the base URL
 const api = axios.create({
-  baseURL:
-    process.env.EXPO_PUBLIC_API_URL || Constants.expoConfig?.extra?.apiUrl,
+  baseURL: 'https://housing-online-shop.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
