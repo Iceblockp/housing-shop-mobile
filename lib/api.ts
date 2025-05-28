@@ -51,7 +51,7 @@ export const authApi = {
     floor?: number;
     password?: string;
   }) => {
-    const response = await api.patch('/profile', userData);
+    const response = await api.patch('/users/profile', userData);
     return response.data;
   },
 };

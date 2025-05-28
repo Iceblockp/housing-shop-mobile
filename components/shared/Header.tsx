@@ -11,6 +11,7 @@ interface HeaderProps {
   showBack?: boolean;
   showNotification?: boolean;
   rightComponent?: React.ReactNode;
+  onBackPress?: () => void; // Add this line
 }
 
 export function Header({
@@ -18,11 +19,16 @@ export function Header({
   showBack = false,
   showNotification = true,
   rightComponent,
+  onBackPress, // Add this line
 }: HeaderProps) {
   const { unreadCount } = useNotifications();
 
   const handleGoBack = () => {
-    router.back();
+    if (onBackPress) {
+      onBackPress();
+    } else {
+      router.back();
+    }
   };
 
   const handleNotificationPress = () => {

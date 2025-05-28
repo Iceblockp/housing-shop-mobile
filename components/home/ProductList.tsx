@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { productApi } from '@/lib/api';
 import { Product } from '@/types';
@@ -13,8 +20,16 @@ interface ProductListProps {
   searchQuery?: string;
 }
 
-export function ProductList({ title, categoryId, searchQuery }: ProductListProps) {
-  const { data: products, isLoading, error } = useQuery({
+export function ProductList({
+  title,
+  categoryId,
+  searchQuery,
+}: ProductListProps) {
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['products', categoryId, searchQuery],
     queryFn: () => productApi.getAll({ categoryId, q: searchQuery }),
   });

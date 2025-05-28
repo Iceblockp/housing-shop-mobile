@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth/auth-provider';
 
 export default function AppLayout() {
   const { isAdmin } = useAuth();
-  const cartItemsCount = useCartStore(state => state.getTotalItems());
+  const cartItemsCount = useCartStore((state) => state.getTotalItems());
 
   return (
     <Tabs
@@ -26,7 +26,8 @@ export default function AppLayout() {
         },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -38,14 +39,18 @@ export default function AppLayout() {
         name="orders"
         options={{
           title: isAdmin ? 'Orders' : 'My Orders',
-          tabBarIcon: ({ color, size }) => <Package size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Package size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
           title: 'Cart',
-          tabBarIcon: ({ color, size }) => <ShoppingCart size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <ShoppingCart size={size} color={color} />
+          ),
           tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: colors.primary,
@@ -60,7 +65,7 @@ export default function AppLayout() {
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />
-      
+
       {/* Hidden screens not displayed in the tab bar */}
       <Tabs.Screen
         name="product/[id]"

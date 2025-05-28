@@ -25,24 +25,28 @@ export default function CategoryScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
-        <Header title="Category" showBack />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>Loading category...</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={styles.container}>
+          <Header title="Category" showBack />
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Loading category...</Text>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !category) {
     return (
-      <View style={styles.container}>
-        <Header title="Category" showBack />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Failed to load category</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={styles.container}>
+          <Header title="Category" showBack />
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Failed to load category</Text>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 

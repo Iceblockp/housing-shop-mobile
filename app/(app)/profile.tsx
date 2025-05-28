@@ -307,7 +307,7 @@ export default function ProfileScreen() {
 
       {isAdmin && (
         <>
-          <Text style={[styles.menuTitle, styles.adminTitle]}>Admin</Text>
+          {/* <Text style={[styles.menuTitle, styles.adminTitle]}>Admin</Text>
 
           <TouchableOpacity
             style={styles.menuItem}
@@ -329,7 +329,7 @@ export default function ProfileScreen() {
             </View>
             <Text style={styles.menuText}>Manage Categories</Text>
             <ChevronRight size={20} color={colors.textLight} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </>
       )}
     </View>

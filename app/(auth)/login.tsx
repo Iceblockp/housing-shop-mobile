@@ -17,27 +17,15 @@ import { useAuth } from '@/lib/auth/auth-provider';
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import * as SecureStore from 'expo-secure-store';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNativeGoogleSignIn } from '@/components/ui/useNativeGoogleSignIn';
 
 export default function LoginScreen() {
   const { login, isLoading } = useAuth();
+  const { signIn, loading } = useNativeGoogleSignIn();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
-
-  // const checkToken = async () => {
-  //   try {
-  //     const token = await SecureStore.getItemAsync('token');
-  //     if (token) {
-  //       // Token exists, redirect to the home page
-  //       console.log('token is', token);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking token:', error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   checkToken();
-  // }, []);
 
   const validate = () => {
     let isValid = true;
@@ -77,54 +65,93 @@ export default function LoginScreen() {
   };
 
   return (
-    <Container scrollable={false}>
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue to HomeShop</Text>
-        </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <Container scrollable={false}>
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>Welcome Back</Text>
+            <Text style={styles.subtitle}>Sign in to continue to HomeShop</Text>
+          </View>
 
-        <View style={styles.formContainer}>
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={errors.email}
-            leftIcon={<Mail size={20} color={colors.textLight} />}
-          />
+          <View style={styles.formContainer}>
+            <Input
+              label="Email"
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={errors.email}
+              leftIcon={<Mail size={20} color={colors.textLight} />}
+            />
 
-          <Input
-            label="Password"
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={setPassword}
-            isPassword
-            error={errors.password}
-            leftIcon={<Key size={20} color={colors.textLight} />}
-          />
+            <Input
+              label="Password"
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              isPassword
+              error={errors.password}
+              leftIcon={<Key size={20} color={colors.textLight} />}
+            />
 
-          <TouchableOpacity style={styles.forgotPasswordContainer}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity> */}
 
-          <Button onPress={handleLogin} loading={isLoading} fullWidth>
-            Sign In
-          </Button>
-        </View>
-
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <Link href="/(auth)/register" asChild>
-            <TouchableOpacity>
-              <Text style={styles.signUpText}>Sign Up</Text>
+            <Button onPress={handleLogin} loading={isLoading} fullWidth>
+              Sign In
+            </Button>
+          </View>
+          <View>
+            <TouchableOpacity
+              // onPress={signIn}
+              // disabled={loading}
+              style={{
+                width: '100%',
+                backgroundColor: '#fff',
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 8,
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 16,
+              }}
+            >
+              <Image
+                source={require('@/assets/images/google.png')}
+                style={{
+                  width: 20,
+                  height: 20,
+                  marginRight: 8,
+                }}
+                resizeMode="contain"
+              />
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 16,
+                }}
+              >
+                Google login
+              </Text>
             </TouchableOpacity>
-          </Link>
+          </View>
+
+          <View style={styles.footerContainer}>
+            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Link href="/(auth)/register" asChild>
+              <TouchableOpacity>
+                <Text style={styles.signUpText}>Sign Up</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
         </View>
-      </View>
-    </Container>
+      </Container>
+    </SafeAreaView>
   );
 }
 

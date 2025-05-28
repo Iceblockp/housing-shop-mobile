@@ -43,32 +43,38 @@ export default function OrdersScreen() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <View style={styles.centerContainer}>
-          <Text style={styles.loadingText}>Loading orders...</Text>
-        </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={styles.centerContainer}>
+            <Text style={styles.loadingText}>Loading orders...</Text>
+          </View>
+        </SafeAreaView>
       );
     }
 
     if (error) {
       return (
-        <View style={styles.centerContainer}>
-          <Text style={styles.errorText}>Failed to load orders</Text>
-          <Button
-            variant="outline"
-            onPress={() => refetch()}
-            style={styles.retryButton}
-          >
-            Retry
-          </Button>
-        </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={styles.centerContainer}>
+            <Text style={styles.errorText}>Failed to load orders</Text>
+            <Button
+              variant="outline"
+              onPress={() => refetch()}
+              style={styles.retryButton}
+            >
+              Retry
+            </Button>
+          </View>
+        </SafeAreaView>
       );
     }
 
     if (!orders || orders.length === 0) {
       return (
-        <View style={styles.centerContainer}>
-          <Text style={styles.emptyText}>No orders found</Text>
-        </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={styles.centerContainer}>
+            <Text style={styles.emptyText}>No orders found</Text>
+          </View>
+        </SafeAreaView>
       );
     }
 

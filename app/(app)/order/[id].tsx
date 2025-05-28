@@ -10,7 +10,7 @@ import {
   TextInput,
   Platform,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Phone, Clock } from 'lucide-react-native';
 import { Container } from '@/components/shared/Container';
@@ -323,11 +323,14 @@ export default function OrderDetailScreen() {
   const isDeliveryDeadlinePassed = isDeadlinePassed(
     order.deliveryDeadline || undefined
   );
+  const handleGoBack = () => {
+    router.push('/(app)/orders');
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.container}>
-        <Header title="Order Details" showBack />
+        <Header title="Order Details" showBack onBackPress={handleGoBack} />
 
         <Container onRefresh={refetch} refreshing={isLoading}>
           <View style={styles.header}>
