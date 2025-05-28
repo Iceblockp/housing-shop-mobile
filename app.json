@@ -10,11 +10,13 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "scheme": "myapp",
+    "scheme": "com.james_marcus.home_shop",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.james_marcus.home_shop",
+      "buildNumber": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -24,7 +26,8 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
@@ -34,6 +37,14 @@
       "eas": {
         "projectId": "5ddee400-9bc7-4f20-9e3d-c48a7260e7d8"
       }
+    },
+    "android": {
+      "package": "com.james_marcus.home_shop",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "versionCode": 1
     }
   }
 }
