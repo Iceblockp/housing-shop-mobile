@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-// import { useApiGoogleLogin } from "@/api/auth/login-google";
 import { useRouter } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
+import api from '@/lib/api';
+import * as SecureStore from 'expo-secure-store';
+import { useAuth } from '@/lib/auth/auth-provider';
 
 // Configure Google Sign-In
 GoogleSignin.configure({
@@ -17,7 +20,7 @@ GoogleSignin.configure({
 export const useNativeGoogleSignIn = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // const { mutate, mutateAsync } = useApiGoogleLogin();
+  const { googleLogin } = useAuth();
   const router = useRouter();
 
   const signIn = async () => {
@@ -30,24 +33,7 @@ export const useNativeGoogleSignIn = () => {
       const idToken = userInfo.data?.idToken;
       if (idToken) {
         // await handleSignInWithToken(idToken);
-        console.log('inside');
-        // await mutateAsync(
-        //   { token: idToken },
-        //   {
-        //     onSuccess(data, variables, context) {
-        //       router.push("/(tabs)");
-        //       dispatch(setAccessToken(data.accessToken));
-        //       setData("sessionId", data.tokenSession.id);
-        //       return;
-        //     },
-        //     onError(error) {
-        //       setError("Failed to sign in with Google");
-        //       console.error("Google Sign-In Error:");
-        //       return;
-        //     },
-        //   }
-        // );
-        console.log('end');
+        googleLogin(idToken);
       } else {
         setError('Failed to get ID token');
       }

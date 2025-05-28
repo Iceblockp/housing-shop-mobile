@@ -9,6 +9,7 @@ type AuthContextType = {
   isLoading: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: (accessToken: string) => Promise<void>;
   register: (userData: {
     name: string;
     email: string;
@@ -34,7 +35,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function loadUser() {
       try {
         const token = await SecureStore.getItemAsync('auth-token');
-        console.log('token is: ', token);
 
         if (token) {
           const userData = await authApi.getProfile();
@@ -64,6 +64,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.replace('/(app)');
     } catch (error) {
       console.error('Login failed', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const googleLogin = async (accessToken: string) => {
+    setIsLoading(true);
+    try {
+      const { token, user } = await authApi.googleLogin(accessToken);
+      await SecureStore.setItemAsync('auth-token', token);
+      setUser(user);
+      router.replace('/(app)');
+    } catch (error) {
+      console.error('Google login failed', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -119,6 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAdmin,
         login,
+        googleLogin,
         register,
         logout,
         updateUser,

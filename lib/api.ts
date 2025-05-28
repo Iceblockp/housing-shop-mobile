@@ -2,9 +2,12 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
+// const baseURL = 'http://localhost:3000/api';
+const baseURL = 'https://housing-online-shop.vercel.app/api';
+
 // Create an axios instance with the base URL
 const api = axios.create({
-  baseURL: 'https://housing-online-shop.vercel.app/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,6 +30,10 @@ api.interceptors.request.use(async (config) => {
 export const authApi = {
   login: async (email: string, password: string) => {
     const response = await api.post('/users/login', { email, password });
+    return response.data;
+  },
+  googleLogin: async (token: string) => {
+    const response = await api.post('/users/google-login', { token });
     return response.data;
   },
   register: async (userData: {

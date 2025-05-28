@@ -15,8 +15,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.james_marcus.home_shop",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.baranie.homeshop",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "web": {
       "bundler": "metro",
@@ -25,7 +28,6 @@
     },
     "plugins": [
       "expo-router",
-
       [
         "@react-native-google-signin/google-signin",
         {

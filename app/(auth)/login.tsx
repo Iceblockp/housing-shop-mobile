@@ -105,8 +105,8 @@ export default function LoginScreen() {
           </View>
           <View>
             <TouchableOpacity
-              // onPress={signIn}
-              // disabled={loading}
+              onPress={signIn}
+              disabled={loading}
               style={{
                 width: '100%',
                 backgroundColor: '#fff',
