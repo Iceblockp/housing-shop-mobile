@@ -41,27 +41,48 @@ export default function CartScreen() {
     onSuccess: (newOrder) => {
       clearCart();
 
-      // Update the orders cache with the new order
-      // Use a function to safely update the cache without type errors
       queryClient.setQueriesData({ queryKey: ['orders'] }, (oldData: any) => {
         // If we don't have any cached data yet, don't try to update it
         if (!oldData) return oldData;
 
-        // Make sure the new order has all the fields needed for display
-        // This ensures the OrderItem component can render it properly
-        return [newOrder, ...oldData];
+        // With infiniteQuery, the structure is different
+        // We need to update the first page in the pages array
+        return {
+          pages: oldData.pages.map((page: any, index: number) => {
+            // Update only the first page
+            if (index === 0) {
+              return {
+                ...page,
+                orders: [newOrder, ...page.orders],
+              };
+            }
+            return page;
+          }),
+          pageParams: oldData.pageParams,
+        };
       });
 
-      // Also update any filtered queries that should include this order
-      // For example, update the PENDING orders list since new orders start as PENDING
       queryClient.setQueriesData(
         { queryKey: ['orders', 'PENDING'] },
         (oldData: any) => {
           // If we don't have any cached data yet, don't try to update it
           if (!oldData) return oldData;
 
-          // Add the new order to the existing filtered orders list
-          return [newOrder, ...oldData];
+          // With infiniteQuery, the structure is different
+          // We need to update the first page in the pages array
+          return {
+            pages: oldData.pages.map((page: any, index: number) => {
+              // Update only the first page
+              if (index === 0) {
+                return {
+                  ...page,
+                  orders: [newOrder, ...page.orders],
+                };
+              }
+              return page;
+            }),
+            pageParams: oldData.pageParams,
+          };
         }
       );
 
