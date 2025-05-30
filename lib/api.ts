@@ -96,7 +96,11 @@ export const categoryApi = {
 
 // API functions for products
 export const productApi = {
-  getAll: async (params?: { categoryId?: string; q?: string }) => {
+  getAll: async (params?: {
+    categoryId?: string;
+    q?: string;
+    page?: number;
+  }) => {
     const response = await api.get('/products', { params });
     return response.data;
   },
@@ -137,7 +141,7 @@ export const productApi = {
 
 // API functions for orders
 export const orderApi = {
-  getAll: async (params?: { status?: string }) => {
+  getAll: async (params?: { status?: string; page?: number }) => {
     const response = await api.get('/orders', { params });
     return response.data;
   },
@@ -164,10 +168,48 @@ export const orderApi = {
     return response.data;
   },
 };
+export const requestApi = {
+  // Fetch all requests with optional pagination parameters
+  getAll: async (params?: { limit?: number; page?: number }) => {
+    const response = await api.get('/requests', { params });
+    return response.data;
+  },
+
+  // Fetch a single request by ID
+  getById: async (id: string) => {
+    const response = await api.get(`/requests/${id}`);
+    return response.data;
+  },
+
+  // Create a new request
+  create: async (data: { title: string; description: string }) => {
+    const response = await api.post('/requests', data);
+    return response.data;
+  },
+
+  // Update an existing request by ID
+  update: async (
+    id: string,
+    data: { title?: string; description?: string; adminReply?: string }
+  ) => {
+    const response = await api.patch(`/requests/${id}`, data);
+    return response.data;
+  },
+
+  // Delete a request by ID
+  delete: async (id: string) => {
+    const response = await api.delete(`/requests/${id}`);
+    return response.data;
+  },
+};
 
 // API functions for notifications
 export const notificationApi = {
-  getAll: async (params?: { unreadOnly?: boolean; limit?: number }) => {
+  getAll: async (params?: {
+    unreadOnly?: boolean;
+    limit?: number;
+    page?: number;
+  }) => {
     const response = await api.get('/notifications', { params });
     return response.data;
   },

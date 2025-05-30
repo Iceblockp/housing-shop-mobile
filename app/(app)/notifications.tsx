@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { Container } from '@/components/shared/Container';
 import { Header } from '@/components/shared/Header';
@@ -24,6 +25,9 @@ export default function NotificationsScreen() {
     isLoading,
     error,
     refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     markAsRead,
     markAllAsRead,
     isMarkingAllAsRead,
@@ -52,6 +56,10 @@ export default function NotificationsScreen() {
     if (notification.orderId) {
       router.push(`/order/${notification.orderId}`);
     }
+
+    if (notification.requestId) {
+      router.push(`/request/${notification.requestId}`);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -60,6 +68,22 @@ export default function NotificationsScreen() {
     } catch (error) {
       return dateString;
     }
+  };
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  // Render footer loader
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
   };
 
   const renderNotification = ({ item }: { item: any }) => (
@@ -148,6 +172,10 @@ export default function NotificationsScreen() {
               contentContainerStyle={styles.notificationsList}
               refreshing={isLoading}
               onRefresh={refetch}
+              scrollEnabled={true}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={renderFooter}
             />
           )}
         </Container>
@@ -248,5 +276,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     color: colors.textLight,
     marginTop: 16,
+  },
+  footerLoader: {
+    padding: 16,
+    alignItems: 'center',
   },
 });

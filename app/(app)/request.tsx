@@ -6,44 +6,35 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
 import { Container } from '@/components/shared/Container';
 import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
-import { OrderItem } from '@/components/orders/OrderItem';
-import { orderApi } from '@/lib/api';
+
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import { useAuth } from '@/lib/auth/auth-provider';
-import { OrderStatus } from '@/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useOrders } from '@/hooks/use-orders';
+import { useRequests } from '@/hooks/use-requests';
+import RequestItem from '@/components/requests/RequestItem';
+import RequestModal from '@/components/ui/RequestCreateModel';
+import { PlusIcon } from 'lucide-react-native';
 
-export default function OrdersScreen() {
+export default function RequestScreen() {
   const { isAdmin } = useAuth();
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
+  const [isRequestModelVisible, setIsRequestModelVisible] = useState(false);
 
   const {
-    data: rawOrders,
+    data: rawRequests,
     isLoading,
+    isError,
     error,
     refetch,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useOrders({ status: statusFilter !== 'ALL' ? statusFilter : undefined });
+  } = useRequests({ limit: 10 });
 
-  const orders = rawOrders?.pages.flatMap((page) => page.orders) || [];
-
-  const filterOptions: Array<{ label: string; value: OrderStatus | 'ALL' }> = [
-    { label: 'All', value: 'ALL' },
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Confirmed', value: 'CONFIRMED' },
-    { label: 'Processing', value: 'PROCESSING' },
-    { label: 'Delivering', value: 'DELIVERING' },
-    { label: 'Completed', value: 'COMPLETED' },
-    { label: 'Cancelled', value: 'CANCELLED' },
-  ];
+  const requests = rawRequests?.pages.flatMap((page) => page.requests) || [];
 
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -67,7 +58,7 @@ export default function OrdersScreen() {
       return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={styles.centerContainer}>
-            <Text style={styles.loadingText}>Loading orders...</Text>
+            <Text style={styles.loadingText}>Loading request...</Text>
           </View>
         </SafeAreaView>
       );
@@ -77,7 +68,7 @@ export default function OrdersScreen() {
       return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={styles.centerContainer}>
-            <Text style={styles.errorText}>Failed to load orders</Text>
+            <Text style={styles.errorText}>Failed to load requests</Text>
             <Button
               variant="outline"
               onPress={() => refetch()}
@@ -90,11 +81,11 @@ export default function OrdersScreen() {
       );
     }
 
-    if (!orders || orders.length === 0) {
+    if (!requests || requests.length === 0) {
       return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={styles.centerContainer}>
-            <Text style={styles.emptyText}>No orders found</Text>
+            <Text style={styles.emptyText}>No requests found</Text>
           </View>
         </SafeAreaView>
       );
@@ -106,41 +97,41 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <Header title={isAdmin ? 'All Orders' : 'My Orders'} showBack={false} />
-
-        {/* Filter section - outside of scrollable container */}
-        <View style={styles.filterContainer}>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={filterOptions}
-            keyExtractor={(item) => item.value}
-            renderItem={({ item }) => (
-              <Button
-                variant={statusFilter === item.value ? 'primary' : 'outline'}
-                size="sm"
-                style={styles.filterButton}
-                onPress={() => setStatusFilter(item.value)}
-              >
-                {item.label}
-              </Button>
-            )}
-            contentContainerStyle={styles.filterList}
-          />
-        </View>
+        <Header
+          title={isAdmin ? 'All Requests' : 'My Requests'}
+          showBack={false}
+        />
 
         {/* Use Container with scrollable={false} since we're using FlatList */}
-        <Container scrollable={false} style={styles.ordersContainer}>
+        <Container
+          scrollable={false}
+          onRefresh={refetch}
+          refreshing={isLoading}
+          style={styles.ordersContainer}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Button
+              onPress={() => setIsRequestModelVisible(true)}
+              style={{ marginBottom: 12 }}
+            >
+              Send Request
+            </Button>
+          </View>
           {renderContent() || (
             <FlatList
-              data={orders}
+              data={requests}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <OrderItem order={item} />}
+              renderItem={({ item }) => <RequestItem request={item} />}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.ordersList}
               refreshing={isLoading}
               onRefresh={refetch}
-              scrollEnabled={true}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={renderFooter}
@@ -148,6 +139,10 @@ export default function OrdersScreen() {
           )}
         </Container>
       </View>
+      <RequestModal
+        isVisible={isRequestModelVisible}
+        onClose={() => setIsRequestModelVisible(false)}
+      />
     </SafeAreaView>
   );
 }

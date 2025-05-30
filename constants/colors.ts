@@ -35,6 +35,8 @@ export const colors = {
   textDark: '#0F172A',
   border: '#E2E8F0',
   disabled: '#CBD5E1',
+
+  gray: '#737373',
 };
 
 // Status colors mapping

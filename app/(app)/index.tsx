@@ -20,6 +20,7 @@ export default function HomeScreen() {
         <Header title="HomeShop" showBack={false} />
 
         <Container
+          scrollable={false}
           onRefresh={() =>
             queryClient.invalidateQueries({ queryKey: ['products'] })
           }
@@ -54,8 +55,8 @@ export default function HomeScreen() {
             />
           ) : (
             <>
-              <CategoryList />
-              <ProductList title="All Products" />
+              {/* <CategoryList /> */}
+              <ProductList header={CategoryList} title="All Products" />
             </>
           )}
         </Container>

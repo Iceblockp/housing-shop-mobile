@@ -55,7 +55,7 @@ export default function CategoryScreen() {
       <View style={styles.container}>
         <Header title={category.name} showBack />
 
-        <Container>
+        <Container scrollable={false}>
           {category.description && (
             <View style={styles.descriptionContainer}>
               <Text style={styles.descriptionText}>{category.description}</Text>

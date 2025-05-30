@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,26 +13,53 @@ import { Product } from '@/types';
 import { ProductCard } from './ProductCard';
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
+import { useProducts } from '@/hooks/use-products';
+import { CategoryList } from './CategoryList';
 
 interface ProductListProps {
   title: string;
   categoryId?: string;
   searchQuery?: string;
+  header?:
+    | React.ComponentType<any>
+    | React.ReactElement<unknown, string | React.JSXElementConstructor<any>>
+    | null
+    | undefined;
 }
 
 export function ProductList({
   title,
   categoryId,
   searchQuery,
+  header,
 }: ProductListProps) {
   const {
-    data: products,
+    data: rawProducts,
     isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     error,
-  } = useQuery({
-    queryKey: ['products', categoryId, searchQuery],
-    queryFn: () => productApi.getAll({ categoryId, q: searchQuery }),
-  });
+  } = useProducts({ categoryId: categoryId, q: searchQuery });
+
+  const products = rawProducts?.pages.flatMap((p) => p.products) ?? [];
+
+  // Handle loading more products
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  // Render footer loader
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -65,10 +92,15 @@ export function ProductList({
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={header}
         numColumns={2}
         renderItem={({ item }) => <ProductCard product={item} />}
-        scrollEnabled={false}
         contentContainerStyle={styles.listContent}
+        scrollEnabled={true} // Enable scrolling
+        onEndReached={handleLoadMore} // Trigger load more when reaching end
+        onEndReachedThreshold={0.1} // Start loading when 50% away from the end
+        ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -115,5 +147,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
     fontFamily: fonts.regular,
+  },
+  footerLoader: {
+    padding: 16,
+    alignItems: 'center',
   },
 });

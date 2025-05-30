@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Layers } from 'lucide-react-native';
@@ -9,7 +16,11 @@ import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 
 export function CategoryList() {
-  const { data: categories, isLoading, error } = useQuery({
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['categories'],
     queryFn: categoryApi.getAll,
   });
@@ -48,7 +59,10 @@ export function CategoryList() {
             onPress={() => handleCategoryPress(item)}
           >
             {item.imageUrl ? (
-              <Image source={{ uri: item.imageUrl }} style={styles.categoryImage} />
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.categoryImage}
+              />
             ) : (
               <View style={styles.categoryIconContainer}>
                 <Layers size={28} color={colors.primary} />

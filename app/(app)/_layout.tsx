@@ -1,5 +1,11 @@
 import { Tabs } from 'expo-router';
-import { Home, Package, ShoppingCart, User } from 'lucide-react-native';
+import {
+  Home,
+  MessageCircleQuestion,
+  Package,
+  ShoppingCart,
+  User,
+} from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import { useCartStore } from '@/lib/cart/cart-store';
@@ -59,6 +65,15 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="request"
+        options={{
+          title: 'Request',
+          tabBarIcon: ({ color, size }) => (
+            <MessageCircleQuestion size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -69,6 +84,12 @@ export default function AppLayout() {
       {/* Hidden screens not displayed in the tab bar */}
       <Tabs.Screen
         name="product/[id]"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="request/[id]"
         options={{
           href: null,
         }}
