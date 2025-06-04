@@ -3,7 +3,8 @@ import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
 // const baseURL = 'http://localhost:3000/api';
-const baseURL = 'https://housing-online-shop.vercel.app/api';
+// const baseURL = 'https://housing-online-shop.vercel.app/api';
+const baseURL = 'https://housing-online-shop-gray.vercel.app/api';
 
 // Create an axios instance with the base URL
 const api = axios.create({
