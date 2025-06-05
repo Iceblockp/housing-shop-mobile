@@ -24,7 +24,7 @@ type Props = {
 
 export default function RequestModal({ isVisible, onClose }: Props) {
   const [title, setTitle] = useState('');
-  const { mutate } = useCreateRequest();
+  const { mutate, isPending } = useCreateRequest();
   const [description, setDescription] = useState('');
   const [errors, setErrors] = useState({
     title: '',
@@ -120,7 +120,9 @@ export default function RequestModal({ isVisible, onClose }: Props) {
                 error={errors.description}
                 leftIcon={<Clipboard size={20} color={colors.textLight} />}
               />
-              <Button onPress={handleSave}>Send</Button>
+              <Button onPress={handleSave} disabled={isPending}>
+                {isPending ? 'Saving...' : 'Save'}
+              </Button>
             </View>
           </TouchableWithoutFeedback>
         </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ArrowLeft, Bell } from 'lucide-react-native';
 import { fonts } from '@/constants/fonts';
 import { colors } from '@/constants/colors';
@@ -22,6 +22,7 @@ export function Header({
   onBackPress, // Add this line
 }: HeaderProps) {
   const { unreadCount } = useNotifications();
+  const router = useRouter();
 
   const handleGoBack = () => {
     if (onBackPress) {

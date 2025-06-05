@@ -10,7 +10,7 @@ import {
   TextInput,
   Platform,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Phone, Clock } from 'lucide-react-native';
 import { Container } from '@/components/shared/Container';
@@ -32,6 +32,7 @@ import { useGetAdmin } from '@/hooks/useAdmin';
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user, isAdmin } = useAuth();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [deliveryDeadline, setDeliveryDeadline] = useState('30'); // Default 30 minutes
   const [remainingConfirmTime, setRemainingConfirmTime] = useState<
@@ -324,13 +325,13 @@ export default function OrderDetailScreen() {
     order.deliveryDeadline || undefined
   );
   const handleGoBack = () => {
-    router.push('/(app)/orders');
+    router.back();
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.container}>
-        <Header title="Order Details" showBack onBackPress={handleGoBack} />
+        <Header title="Order Detailss" showBack onBackPress={handleGoBack} />
 
         <Container onRefresh={refetch} refreshing={isLoading}>
           <View style={styles.header}>
