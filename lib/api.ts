@@ -58,6 +58,9 @@ export const authApi = {
     roomNumber?: string;
     floor?: number;
     password?: string;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
   }) => {
     const response = await api.patch('/users/profile', userData);
     return response.data;
@@ -109,6 +112,18 @@ export const productApi = {
     const response = await api.get(`/products/${id}`);
     return response.data;
   },
+  getBestSelling: async () => {
+    const response = await api.get('/products/best');
+    return response.data;
+  },
+  getFeatured: async () => {
+    const response = await api.get('/products/featured');
+    return response.data;
+  },
+  getNew: async () => {
+    const response = await api.get('/products/new');
+    return response.data;
+  },
   create: async (data: {
     name: string;
     description?: string;
@@ -154,6 +169,7 @@ export const orderApi = {
     items: { productId: string; quantity: number }[];
     notes?: string;
     confirmationDeadlineMinutes?: number;
+    couponCode?: string; // Add this new field
   }) => {
     const response = await api.post('/orders', data);
     return response.data;
@@ -220,6 +236,52 @@ export const notificationApi = {
   },
   markAllAsRead: async () => {
     const response = await api.post('/notifications/mark-all-read');
+    return response.data;
+  },
+};
+
+// API functions for events
+export const eventApi = {
+  getActive: async (limit?: number) => {
+    const params = limit ? { limit } : {};
+    const response = await api.get('/events/active', { params });
+    return response.data;
+  },
+};
+
+// API functions for coupons
+export const couponApi = {
+  getUserCoupons: async (params?: {
+    isUsed?: boolean;
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await api.get('/coupons/user', { params });
+    return response.data;
+  },
+  combineCoupons: async (couponIds: string[]) => {
+    const response = await api.post('/coupons/combine', { couponIds });
+    return response.data;
+  },
+  // Add these new admin functions
+  getAllCoupons: async (params?: {
+    isUsed?: boolean;
+    userId?: string;
+    q?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await api.get('/coupons', { params });
+    return response.data;
+  },
+  createCoupon: async (data: {
+    code: string;
+    secretCode: string;
+    amount: number;
+    isUsed?: boolean;
+    userId?: string;
+  }) => {
+    const response = await api.post('/coupons', data);
     return response.data;
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -10,11 +10,12 @@ import {
 } from '@expo-google-fonts/inter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider } from '@/lib/auth/auth-provider';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { colors } from '@/constants/colors';
+import { AnimatedSplash } from '@/components/shared/AnimatedSplash';
 
 // Keep the splash screen visible until fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -24,6 +25,7 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   useFrameworkReady();
+  const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
 
   const [fontsLoaded, fontError] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -34,6 +36,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
+      // Hide the native splash screen
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
@@ -42,8 +45,15 @@ export default function RootLayout() {
     return null;
   }
 
+  // If fonts are loaded but we're still showing the animated splash
+  if (showAnimatedSplash) {
+    return (
+      <AnimatedSplash onAnimationFinish={() => setShowAnimatedSplash(false)} />
+    );
+  }
+
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <Stack

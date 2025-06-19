@@ -10,11 +10,11 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { productApi } from '@/lib/api';
 import { Product } from '@/types';
-import { ProductCard } from './ProductCard';
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import { useProducts } from '@/hooks/use-products';
 import { CategoryList } from './CategoryList';
+import ProductCard from '../common/ProductCard';
 
 interface ProductListProps {
   title: string;

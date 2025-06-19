@@ -103,11 +103,9 @@ export const useProduct = (id: string) => {
   return useQuery<Product>({
     queryKey: ['product', id],
     queryFn: async () => {
-      const response = await fetch(`/api/products/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch product');
-      }
-      return response.json();
+      const response = await productApi.getById(id);
+
+      return response;
     },
     enabled: !!id,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -115,86 +113,56 @@ export const useProduct = (id: string) => {
   });
 };
 
-// Create a new product (admin only)
-export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
+// Fetch best-selling products
+export const useBestSellingProducts = () => {
+  type ResponseType = {
+    products: (Product & { orderCount: number })[];
+    count: number;
+  };
 
-  return useMutation({
-    mutationFn: async (
-      data: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'category'>
-    ) => {
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to create product');
-      }
-
-      return response.json();
+  return useQuery<ResponseType>({
+    queryKey: ['products', 'best-selling'],
+    queryFn: async () => {
+      const response = await productApi.getBestSelling();
+      return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };
 
-// Update an existing product (admin only)
-export const useUpdateProduct = (id: string) => {
-  const queryClient = useQueryClient();
+// Fetch featured products
+export const useFeaturedProducts = () => {
+  type ResponseType = {
+    products: Product[];
+    count: number;
+  };
 
-  return useMutation({
-    mutationFn: async (
-      data: Partial<
-        Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'category'>
-      >
-    ) => {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to update product');
-      }
-
-      return response.json();
+  return useQuery<ResponseType>({
+    queryKey: ['products', 'featured'],
+    queryFn: async () => {
+      const response = await productApi.getFeatured();
+      return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', id] });
-    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };
 
-// Delete a product (admin only)
-export const useDeleteProduct = () => {
-  const queryClient = useQueryClient();
+// Fetch new products
+export const useNewProducts = () => {
+  type ResponseType = {
+    products: Product[];
+    count: number;
+  };
 
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to delete product');
-      }
-
-      return id;
+  return useQuery<ResponseType>({
+    queryKey: ['products', 'new'],
+    queryFn: async () => {
+      const response = await productApi.getNew();
+      return response;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };

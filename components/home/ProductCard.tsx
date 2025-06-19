@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import { router } from 'expo-router';
 import { ShoppingCart, Box } from 'lucide-react-native';
 import { Product } from '@/types';
@@ -12,7 +19,8 @@ interface ProductCardProps {
 }
 
 const windowWidth = Dimensions.get('window').width;
-const cardWidth = windowWidth < 500 ? (windowWidth - 48) / 2 : (windowWidth - 80) / 3;
+const cardWidth =
+  windowWidth < 500 ? (windowWidth - 48) / 2 : (windowWidth - 80) / 3;
 
 export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
@@ -27,7 +35,10 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <TouchableOpacity style={[styles.card, { width: cardWidth }]} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.card, { width: cardWidth }]}
+      onPress={handlePress}
+    >
       {product.imageUrl ? (
         <Image source={{ uri: product.imageUrl }} style={styles.image} />
       ) : (
@@ -35,15 +46,16 @@ export function ProductCard({ product }: ProductCardProps) {
           <Box size={24} color={colors.textLight} />
         </View>
       )}
-      
+
       <View style={styles.content}>
         <Text style={styles.name} numberOfLines={2}>
           {product.name}
         </Text>
-        
+        <Text style={styles.unit}>{product.unit}</Text>
+
         <View style={styles.footer}>
           <Text style={styles.price}>MMK {product.price.toFixed(0)}</Text>
-          
+
           {product.inStock ? (
             <TouchableOpacity
               style={styles.addButton}
@@ -93,8 +105,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fonts.medium,
     color: colors.text,
-    marginBottom: 8,
-    height: 40,
+    // marginBottom: 8,
+    // height: 40,
   },
   footer: {
     flexDirection: 'row',
@@ -113,6 +125,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  unit: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: '#64748B',
+    marginBottom: 8,
   },
   outOfStock: {
     backgroundColor: colors.disabled,

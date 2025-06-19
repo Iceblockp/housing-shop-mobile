@@ -17,6 +17,9 @@ type AuthContextType = {
     phone?: string;
     roomNumber?: string;
     floor?: number;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
   }) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
@@ -93,6 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone?: string;
     roomNumber?: string;
     floor?: number;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
   }) => {
     setIsLoading(true);
     try {

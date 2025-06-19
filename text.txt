@@ -1,0 +1,215 @@
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
+import { hash } from "bcrypt";
+import { getAuthenticatedUser, verifyToken } from "@/lib/auth-utils";
+
+export async function GET(req: NextRequest) {
+  try {
+    // Try to get user from session (web browser)
+    // const session = await getServerSession(authOptions);
+
+    // const token =
+    //   "eyJhbGciOiJSUzI1NiIsImtpZCI6ImJhYTY0ZWZjMTNlZjIzNmJlOTIxZjkyMmUzYTY3Y2M5OTQxNWRiOWIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI5MDE4MjEyMzcyNS05dWI1YTJsNmQzMjU4bDR0Mjd1dDA3dXJjNWcwbjBnNC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjkwMTgyMTIzNzI1LTVxamc4ODh1bGJ2OTZmbzVlZW9xdWRvNGw5MzRycGY0LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA1NTI5NzMwNzAyNTUwOTAwMTUwIiwiZW1haWwiOiJrc2wxMjQ5ODBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJIZlU0Qi1uamdBYzJKT0gtUTZtYjN3Iiwibm9uY2UiOiJxbm9qSGZxOUVnZXRkVzJmQV91NUJyN1VaU2pubTFfR1FwYlgxamNldjBBIiwibmFtZSI6Imsgc2wiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jSW1GMVdhRzVSU0xTU3FJN000MGdzSmZQSVhEYWNBMTVjdXoyNUNQbF9jOTZIQ2F3PXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6ImsiLCJmYW1pbHlfbmFtZSI6InNsIiwiaWF0IjoxNzQ4NDM2ODk0LCJleHAiOjE3NDg0NDA0OTR9.WXa7ewLEW6T3nQWkuKUvtHqV0VovZym2CNzy6P3azC1NgqbjTefO5_AofW5WXya9gTFiIiX12C_7Z83DJu1RvkE9zTHI0XAQfoSRphTHkHmSSjXDOo5Deyd5dwr_EsMMWJ_bWKj8a52WsgBRuvqoSCIgCj4PQukI-LwNxMUPrVhI37M2zIPNbGELYOTVpbddayK25ee68FSkR0BZVfvYORxEokFeLtt0-14bHgRpzZ9VPoY7O7PR9Gd0B0_xz73EsA36xbw_cRkCi2WErqWSihKhGEYMhn7JoEUc99Nq158Pu8iP6e8CPT1VrNp48ylcgNDaWWF3eUUCxW12-WZvkw";
+    // const response = await fetch(
+    //   `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
+    // );
+    // const userInfo = await response.json();
+
+    // console.log("userInfo: ", userInfo);
+
+    const authUser = await getAuthenticatedUser(req);
+
+    if (!authUser) {
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Try to get user from token (mobile app)
+    // const tokenUser = await verifyToken(req);
+    // console.log("tokenUser: ", tokenUser);
+
+    // If neither authentication method succeeds, return unauthorized
+    // if (!session?.user && !tokenUser) {
+    //   return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+    //     status: 401,
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    // }
+
+    // Determine user ID based on available auth method
+    // const userId = session?.user?.id || tokenUser?.id;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: authUser.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        roomNumber: true,
+        floor: true,
+        address: true,
+        latitude: true,
+        longitude: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return new NextResponse(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("[PROFILE_GET]", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Internal server error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    // Try to get user from session (web browser)
+    // const session = await getServerSession(authOptions);
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Try to get user from token (mobile app)
+    // const tokenUser = await verifyToken(req);
+
+    // If neither authentication method succeeds, return unauthorized
+    // if (!session?.user && !tokenUser) {
+    //   return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+    //     status: 401,
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    // }
+
+    // // Determine user ID based on available auth method
+    // const userId = session?.user?.id || tokenUser?.id;
+
+    const body = await req.json();
+    const {
+      name,
+      phone,
+      roomNumber,
+      floor,
+      password,
+      address,
+      latitude,
+      longitude,
+    } = body;
+
+    const data: any = {};
+
+    if (name) data.name = name;
+    if (phone) data.phone = phone;
+    if (roomNumber) data.roomNumber = roomNumber;
+    if (floor) data.floor = parseInt(floor);
+    if (password) data.password = await hash(password, 10);
+    if (address !== undefined) data.address = address;
+    if (latitude !== undefined) data.latitude = parseFloat(latitude);
+    if (longitude !== undefined) data.longitude = parseFloat(longitude);
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        roomNumber: true,
+        floor: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("[PROFILE_PATCH]", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Internal server error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+; upper if for /users/profile route; and under is /users/register route; 
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { hash } from "bcrypt";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, email, password, phone, roomNumber, floor, address, latitude, longitude } = body;
+
+    if (!name || !email || !password) {
+      return new NextResponse("Missing required fields", { status: 400 });
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      return new NextResponse("User already exists", { status: 400 });
+    }
+
+    // Hash the password
+    const hashedPassword = await hash(password, 10);
+
+    // Create new user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        roomNumber,
+        floor: floor ? parseInt(floor) : null,
+        address,
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
+        // Default role is USER
+      },
+    });
+
+    // Don't return the password
+    const { password: _, ...userWithoutPassword } = user;
+
+    return NextResponse.json(userWithoutPassword);
+  } catch (error) {
+    console.error("[REGISTER_POST]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}; 

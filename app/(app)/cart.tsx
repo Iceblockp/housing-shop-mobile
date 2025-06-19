@@ -13,19 +13,19 @@ import {
 import { router } from 'expo-router';
 import { Minus, Plus, Trash2, Clock } from 'lucide-react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Container } from '@/components/shared/Container';
-import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
-import { CartItem, Order } from '@/types';
+import { CartItem } from '@/types';
 import { useCartStore } from '@/lib/cart/cart-store';
 import { orderApi } from '@/lib/api';
-import { colors } from '@/constants/colors';
-import { fonts } from '@/constants/fonts';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NotiBell } from '@/components/shared/NotiBell';
 
 export default function CartScreen() {
+  const insets = useSafeAreaInsets();
   const [notes, setNotes] = useState('');
   const [confirmDeadline, setConfirmDeadline] = useState('30'); // default 30 minutes
+  const [couponCode, setCouponCode] = useState(''); // Add state for coupon code
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice } =
     useCartStore();
 
@@ -37,6 +37,7 @@ export default function CartScreen() {
       items: { productId: string; quantity: number }[];
       notes?: string;
       confirmationDeadlineMinutes?: number;
+      couponCode?: string;
     }) => orderApi.create(data),
     onSuccess: (newOrder) => {
       clearCart();
@@ -140,6 +141,7 @@ export default function CartScreen() {
       items: orderItems,
       notes: notes.trim() || undefined,
       confirmationDeadlineMinutes,
+      couponCode: couponCode.trim() || undefined, // Add coupon code to the order
     });
   };
 
@@ -221,7 +223,7 @@ export default function CartScreen() {
             style={styles.quantityButton}
             onPress={() => handleQuantityChange(item, -1)}
           >
-            <Minus size={16} color={colors.text} />
+            <Minus size={16} color="#1E293B" />
           </TouchableOpacity>
 
           <Text style={styles.quantityText}>{item.quantity}</Text>
@@ -230,7 +232,7 @@ export default function CartScreen() {
             style={styles.quantityButton}
             onPress={() => handleQuantityChange(item, 1)}
           >
-            <Plus size={16} color={colors.text} />
+            <Plus size={16} color="#1E293B" />
           </TouchableOpacity>
         </View>
 
@@ -238,93 +240,102 @@ export default function CartScreen() {
           style={styles.removeButton}
           onPress={() => handleRemoveItem(item)}
         >
-          <Trash2 size={20} color={colors.error} />
+          <Trash2 size={20} color="#EF4444" />
         </TouchableOpacity>
       </View>
     </View>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={styles.container}>
-        <Header title="Shopping Cart" showBack={false} />
-
-        <Container scrollable={false}>
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.product.id}
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContent}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Your cart is empty</Text>
-                <Button
-                  variant="outline"
-                  onPress={() => router.push('/')}
-                  style={styles.shopButton}
-                >
-                  Continue Shopping
-                </Button>
-              </View>
-            }
-            ListFooterComponent={
-              items.length > 0 ? (
-                <View style={styles.footer}>
-                  <View style={styles.deadlineContainer}>
-                    <View style={styles.deadlineHeader}>
-                      <Clock size={18} color={colors.accent} />
-                      <Text style={styles.deadlineTitle}>
-                        Confirmation Deadline
-                      </Text>
-                    </View>
-                    <Text style={styles.deadlineText}>
-                      Set a time limit for order confirmation. If not confirmed
-                      within this time, the order will be automatically
-                      cancelled.
-                    </Text>
-                    <View style={styles.deadlineInputContainer}>
-                      <TextInput
-                        style={styles.deadlineInput}
-                        value={confirmDeadline}
-                        onChangeText={setConfirmDeadline}
-                        keyboardType="numeric"
-                        maxLength={3}
-                      />
-                      <Text style={styles.deadlineUnit}>minutes</Text>
-                    </View>
-                  </View>
-
-                  <TextInput
-                    style={styles.notesInput}
-                    placeholder="Add notes for your order (optional)"
-                    placeholderTextColor={colors.textLight}
-                    value={notes}
-                    onChangeText={setNotes}
-                    multiline
-                    numberOfLines={3}
-                  />
-
-                  <View style={styles.totalContainer}>
-                    <Text style={styles.totalLabel}>Total:</Text>
-                    <Text style={styles.totalPrice}>
-                      MMK {getTotalPrice().toFixed(0)}
-                    </Text>
-                  </View>
-
-                  <Button
-                    fullWidth
-                    onPress={handlePlaceOrder}
-                    loading={createOrderMutation.isPending}
-                    disabled={createOrderMutation.isPending}
-                  >
-                    Place Order
-                  </Button>
-                </View>
-              ) : null
-            }
-          />
-        </Container>
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top > 0 ? 0 : 16 }]}>
+        <Text style={styles.title}>Shopping Cart</Text>
+        <NotiBell />
       </View>
+
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.product.id}
+        renderItem={renderItem}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Your cart is empty</Text>
+            <Button
+              variant="outline"
+              onPress={() => router.push('/')}
+              style={styles.shopButton}
+            >
+              Continue Shopping
+            </Button>
+          </View>
+        }
+        ListFooterComponent={
+          items.length > 0 ? (
+            <View style={styles.footer}>
+              <View style={styles.deadlineContainer}>
+                <View style={styles.deadlineHeader}>
+                  <Clock size={18} color="#3B82F6" />
+                  <Text style={styles.deadlineTitle}>
+                    Confirmation Deadline
+                  </Text>
+                </View>
+                <Text style={styles.deadlineText}>
+                  Set a time limit for order confirmation. If not confirmed
+                  within this time, the order will be automatically cancelled.
+                </Text>
+                <View style={styles.deadlineInputContainer}>
+                  <TextInput
+                    style={styles.deadlineInput}
+                    value={confirmDeadline}
+                    onChangeText={setConfirmDeadline}
+                    keyboardType="numeric"
+                    maxLength={3}
+                  />
+                  <Text style={styles.deadlineUnit}>minutes</Text>
+                </View>
+              </View>
+
+              <View style={styles.couponContainer}>
+                <Text style={styles.couponTitle}>Coupon Code</Text>
+                <TextInput
+                  style={styles.couponInput}
+                  placeholder="Enter coupon code (optional)"
+                  placeholderTextColor="#64748B"
+                  value={couponCode}
+                  onChangeText={setCouponCode}
+                />
+              </View>
+
+              <TextInput
+                style={styles.notesInput}
+                placeholder="Add notes for your order (optional)"
+                placeholderTextColor="#64748B"
+                value={notes}
+                onChangeText={setNotes}
+                multiline
+                numberOfLines={3}
+              />
+
+              <View style={styles.totalContainer}>
+                <Text style={styles.totalLabel}>Total:</Text>
+                <Text style={styles.totalPrice}>
+                  MMK {getTotalPrice().toFixed(0)}
+                </Text>
+              </View>
+
+              <Button
+                fullWidth
+                onPress={handlePlaceOrder}
+                loading={createOrderMutation.isPending}
+                disabled={createOrderMutation.isPending}
+              >
+                Place Order
+              </Button>
+            </View>
+          ) : null
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -332,14 +343,29 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  title: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 24,
+    color: '#1E293B',
   },
   listContent: {
     padding: 16,
     flexGrow: 1,
   },
   cartItem: {
-    backgroundColor: colors.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -348,6 +374,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   itemDetails: {
     flexDirection: 'row',
@@ -363,7 +391,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: colors.border,
+    backgroundColor: '#F1F5F9',
     marginRight: 12,
   },
   itemInfo: {
@@ -372,14 +400,14 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 16,
-    fontFamily: fonts.medium,
-    color: colors.text,
+    fontFamily: 'Inter-Medium',
+    color: '#1E293B',
     marginBottom: 4,
   },
   itemPrice: {
     fontSize: 16,
-    fontFamily: fonts.semiBold,
-    color: colors.primary,
+    fontFamily: 'Inter-SemiBold',
+    color: '#3B82F6',
   },
   itemActions: {
     flexDirection: 'row',
@@ -387,7 +415,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: '#F1F5F9',
   },
   quantityControls: {
     flexDirection: 'row',
@@ -397,14 +425,14 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.border,
+    backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   quantityText: {
     fontSize: 16,
-    fontFamily: fonts.semiBold,
-    color: colors.text,
+    fontFamily: 'Inter-SemiBold',
+    color: '#1E293B',
     marginHorizontal: 12,
     minWidth: 20,
     textAlign: 'center',
@@ -413,17 +441,21 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   footer: {
-    backgroundColor: colors.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginTop: 20,
     marginBottom: 60, // Extra space for tab bar
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   deadlineContainer: {
     marginBottom: 16,
-    backgroundColor: colors.background,
+    backgroundColor: '#F8FAFC',
     borderRadius: 8,
     padding: 12,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
   },
   deadlineHeader: {
     flexDirection: 'row',
@@ -432,14 +464,14 @@ const styles = StyleSheet.create({
   },
   deadlineTitle: {
     fontSize: 16,
-    fontFamily: fonts.semiBold,
-    color: colors.text,
+    fontFamily: 'Inter-SemiBold',
+    color: '#1E293B',
     marginLeft: 8,
   },
   deadlineText: {
     fontSize: 14,
-    fontFamily: fonts.regular,
-    color: colors.textLight,
+    fontFamily: 'Inter-Regular',
+    color: '#64748B',
     marginBottom: 12,
   },
   deadlineInputContainer: {
@@ -447,34 +479,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deadlineInput: {
-    backgroundColor: colors.card,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 16,
-    fontFamily: fonts.medium,
-    color: colors.text,
+    fontFamily: 'Inter-Medium',
+    color: '#1E293B',
     width: 70,
     textAlign: 'center',
   },
   deadlineUnit: {
     fontSize: 16,
-    fontFamily: fonts.regular,
-    color: colors.text,
+    fontFamily: 'Inter-Regular',
+    color: '#1E293B',
     marginLeft: 8,
   },
-  notesInput: {
-    backgroundColor: colors.background,
+  couponContainer: {
+    marginBottom: 16,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    padding: 12,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#F1F5F9',
+  },
+  couponTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+    color: '#1E293B',
+    marginBottom: 8,
+  },
+  couponInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 16,
+    fontFamily: 'Inter-Medium',
+    color: '#1E293B',
+  },
+  notesInput: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 14,
-    fontFamily: fonts.regular,
-    color: colors.text,
+    fontFamily: 'Inter-Regular',
+    color: '#1E293B',
     minHeight: 80,
     textAlignVertical: 'top',
     marginBottom: 16,
@@ -487,13 +544,13 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     fontSize: 18,
-    fontFamily: fonts.semiBold,
-    color: colors.text,
+    fontFamily: 'Inter-SemiBold',
+    color: '#1E293B',
   },
   totalPrice: {
     fontSize: 20,
-    fontFamily: fonts.bold,
-    color: colors.primary,
+    fontFamily: 'Inter-Bold',
+    color: '#3B82F6',
   },
   emptyContainer: {
     alignItems: 'center',
@@ -503,8 +560,8 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    fontFamily: fonts.medium,
-    color: colors.textLight,
+    fontFamily: 'Inter-Medium',
+    color: '#64748B',
     marginBottom: 20,
   },
   shopButton: {

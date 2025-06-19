@@ -363,6 +363,21 @@ export default function OrderDetailScreen() {
               <Text style={styles.infoValue}>MMK {order.total.toFixed(0)}</Text>
             </View>
 
+            {/* Add coupon information */}
+            {order.appliedCoupon && (
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Applied Coupon:</Text>
+                <View style={styles.couponContainer}>
+                  <Text style={styles.couponCode}>
+                    {order.appliedCoupon.code}
+                  </Text>
+                  <Text style={styles.couponAmount}>
+                    -MMK {order.appliedCoupon.amount.toFixed(0)}
+                  </Text>
+                </View>
+              </View>
+            )}
+
             {showConfirmDeadline && (
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Deadline To Confirm:</Text>
@@ -714,5 +729,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+  },
+  couponContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  couponCode: {
+    fontSize: 14,
+    fontFamily: fonts.semiBold,
+    color: colors.primary,
+    marginBottom: 2,
+  },
+  couponAmount: {
+    fontSize: 14,
+    fontFamily: fonts.semiBold,
+    color: colors.success,
   },
 });

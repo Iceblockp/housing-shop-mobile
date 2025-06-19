@@ -3,6 +3,7 @@ import {
   Home,
   MessageCircleQuestion,
   Package,
+  Search,
   ShoppingCart,
   User,
 } from 'lucide-react-native';
@@ -42,6 +43,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color, size }) => <Search color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="orders"
         options={{
           title: isAdmin ? 'Orders' : 'My Orders',
@@ -67,10 +75,11 @@ export default function AppLayout() {
       <Tabs.Screen
         name="request"
         options={{
-          title: 'Request',
-          tabBarIcon: ({ color, size }) => (
-            <MessageCircleQuestion size={size} color={color} />
-          ),
+          // title: 'Request',
+          // tabBarIcon: ({ color, size }) => (
+          //   <MessageCircleQuestion size={size} color={color} />
+          // ),
+          href: null,
         }}
       />
       <Tabs.Screen

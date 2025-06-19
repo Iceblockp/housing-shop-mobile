@@ -8,6 +8,12 @@ type Product = {
   createdAt: string; // ISO 8601 formatted date string
   updatedAt: string; // ISO 8601 formatted date string
 };
+interface Coupon {
+  id: string;
+  code: string;
+  amount: number;
+  isUsed: boolean;
+}
 
 type OrderItem = {
   id: string;
@@ -48,4 +54,5 @@ export type Order = {
   total: number; // Total price or amount
   updatedAt: string; // ISO 8601 formatted date string
   user: User;
+  appliedCoupon: Coupon | null;
 };

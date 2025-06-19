@@ -7,68 +7,46 @@ import { colors } from '@/constants/colors';
 import { useNotifications } from '@/hooks/useNotifications';
 
 interface HeaderProps {
-  title: string;
-  showBack?: boolean;
   showNotification?: boolean;
   rightComponent?: React.ReactNode;
-  onBackPress?: () => void; // Add this line
 }
 
-export function Header({
-  title,
-  showBack = false,
+export function NotiBell({
   showNotification = true,
   rightComponent,
-  onBackPress, // Add this line
 }: HeaderProps) {
   const { unreadCount } = useNotifications();
   const router = useRouter();
-
-  const handleGoBack = () => {
-    if (onBackPress) {
-      onBackPress();
-    } else {
-      router.back();
-    }
-  };
 
   const handleNotificationPress = () => {
     router.push('/notifications');
   };
 
   return (
-    <View style={styles.header}>
-      <View style={styles.leftContainer}>
-        {showBack && (
-          <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-            <ArrowLeft size={24} color={colors.text} />
-          </TouchableOpacity>
-        )}
-      </View>
+    <View style={styles.rightContainer}>
+      {rightComponent}
 
-      <Text style={styles.title} numberOfLines={1}>
-        {title}
-      </Text>
-
-      <View style={styles.rightContainer}>
-        {rightComponent}
-
-        {showNotification && (
-          <TouchableOpacity
-            onPress={handleNotificationPress}
-            style={styles.notificationButton}
-          >
-            <Bell size={24} color={colors.text} />
-            {unreadCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
+      {showNotification && (
+        //    <TouchableOpacity style={styles.cartButton}>
+        //    <Bell size={24} color="#1E293B" />
+        //    <View style={styles.cartBadge}>
+        //      <Text style={styles.cartBadgeText}>3</Text>
+        //    </View>
+        //  </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleNotificationPress}
+          style={styles.notificationButton}
+        >
+          <Bell size={24} color={colors.text} />
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -105,24 +83,28 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   notificationButton: {
-    padding: 4,
     position: 'relative',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   badge: {
     position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: colors.error,
-    borderRadius: 10,
-    minWidth: 18,
+    top: -4,
+    right: -4,
+    backgroundColor: '#F97316',
+    width: 18,
     height: 18,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
   },
   badgeText: {
-    color: 'white',
+    fontFamily: 'Inter-Bold',
     fontSize: 10,
-    fontFamily: fonts.bold,
+    color: '#FFFFFF',
   },
 });

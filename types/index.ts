@@ -5,6 +5,9 @@ export type User = {
   phone?: string;
   roomNumber?: string;
   floor?: number;
+  address?: string; // New optional field for address
+  latitude?: number; // New optional field for latitude
+  longitude?: number; // New optional field for longitude
   role: 'USER' | 'ADMIN';
   createdAt: string;
 };
@@ -14,9 +17,12 @@ export type Category = {
   name: string;
   description?: string;
   imageUrl?: string;
-  products?: Product[];
+  // products?: Product[];
   createdAt: string;
   updatedAt: string;
+  _count?: {
+    products: number;
+  };
 };
 
 export type Product = {
@@ -28,6 +34,8 @@ export type Product = {
   inStock: boolean;
   categoryId: string;
   category?: Category;
+  unit: string; // kg, pcs, l
+  isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -41,7 +49,13 @@ export type OrderItem = {
   price: number;
 };
 
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'DELIVERING' | 'COMPLETED' | 'CANCELLED';
+export type OrderStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'PROCESSING'
+  | 'DELIVERING'
+  | 'COMPLETED'
+  | 'CANCELLED';
 
 export type Order = {
   id: string;
@@ -63,7 +77,12 @@ export type Order = {
   updatedAt: string;
 };
 
-export type NotificationType = 'NEW_ORDER' | 'ORDER_STATUS_CHANGE' | 'ORDER_CANCELLED' | 'SYSTEM';
+export type NotificationType =
+  | 'NEW_ORDER'
+  | 'ORDER_STATUS_CHANGE'
+  | 'ORDER_CANCELLED'
+  | 'SYSTEM'
+  | 'NEW_COUPON';
 
 export type Notification = {
   id: string;

@@ -57,17 +57,18 @@ interface CreateOrderData {
   items: CreateOrderItem[];
   notes?: string;
   confirmationDeadlineMinutes?: number;
-  processingMinutes?: number;
+  couponCode?: string; // Add this new field
 }
 
+type StatusType =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'PROCESSING'
+  | 'DELIVERING'
+  | 'COMPLETED'
+  | 'CANCELLED';
 interface UpdateOrderData {
-  status?:
-    | 'PENDING'
-    | 'CONFIRMED'
-    | 'PROCESSING'
-    | 'DELIVERING'
-    | 'COMPLETED'
-    | 'CANCELLED';
+  status?: StatusType;
   deliveryDeadlineMinutes?: number;
 }
 
@@ -139,7 +140,7 @@ export const useOrder = (id: string) => {
   return useQuery<Order>({
     queryKey: ['order', id],
     queryFn: async () => {
-      const response = await api.get(`/orders/${id}`).then((res) => res.data);
+      const response = await orderApi.getById(id);
 
       return response;
     },
@@ -153,20 +154,9 @@ export const useCreateOrder = () => {
 
   return useMutation({
     mutationFn: async (data: CreateOrderData) => {
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await orderApi.create(data);
 
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to create order');
-      }
-
-      return response.json();
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -180,20 +170,11 @@ export const useUpdateOrder = (id: string) => {
 
   return useMutation({
     mutationFn: async (data: UpdateOrderData) => {
-      const response = await fetch(`/api/orders/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      const response = await orderApi.updateStatus(id, {
+        status: data.status as StatusType,
+        deliveryDeadlineMinutes: data.deliveryDeadlineMinutes,
       });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to update order');
-      }
-
-      return response.json();
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });

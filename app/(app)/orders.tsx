@@ -16,11 +16,17 @@ import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { OrderStatus } from '@/types';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { useOrders } from '@/hooks/use-orders';
+import { NotiBell } from '@/components/shared/NotiBell';
 
 export default function OrdersScreen() {
   const { isAdmin } = useAuth();
+  const insets = useSafeAreaInsets();
+
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'ALL'>('ALL');
 
   const {
@@ -106,7 +112,16 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <Header title={isAdmin ? 'All Orders' : 'My Orders'} showBack={false} />
+        {/* <Header title={isAdmin ? 'All Orders' : 'My Orders'} showBack={false} /> */}
+        <View style={[styles.header, { paddingTop: insets.top > 0 ? 0 : 16 }]}>
+          <View>
+            <Text style={styles.title}>
+              {isAdmin ? 'All Orders' : 'My Orders'}
+            </Text>
+          </View>
+
+          <NotiBell />
+        </View>
 
         {/* Filter section - outside of scrollable container */}
         <View style={styles.filterContainer}>
@@ -153,6 +168,21 @@ export default function OrdersScreen() {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 24,
+    color: '#1E293B',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,

@@ -1,6 +1,7 @@
 export const colors = {
   // Primary colors
-  primary: '#3B82F6',
+  primary: '#34D399',
+  // primary: '#3B82F6',
   primaryDark: '#2563EB',
   primaryLight: '#93C5FD',
 
@@ -31,6 +32,7 @@ export const colors = {
   background: '#F8FAFC',
   card: '#FFFFFF',
   text: '#1E293B',
+  // textLight: '#64748B',
   textLight: '#64748B',
   textDark: '#0F172A',
   border: '#E2E8F0',
