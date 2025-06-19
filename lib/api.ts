@@ -44,6 +44,9 @@ export const authApi = {
     phone?: string;
     roomNumber?: string;
     floor?: number;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
   }) => {
     const response = await api.post('/users/register', userData);
     return response.data;
