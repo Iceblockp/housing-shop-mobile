@@ -33,6 +33,9 @@ type User = {
   phone: string;
   roomNumber: string;
   floor: number;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type Order = {

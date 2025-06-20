@@ -11,8 +11,9 @@ import {
   Platform,
 } from 'react-native';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Phone, Clock } from 'lucide-react-native';
+import { Phone, Clock, Map } from 'lucide-react-native';
 import { Container } from '@/components/shared/Container';
 import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
@@ -53,6 +54,7 @@ export default function OrderDetailScreen() {
     enabled: !!id,
   });
 
+  console.log('Order:', order);
   const { data: admin } = useGetAdmin();
 
   const updateOrderMutation = useMutation({
@@ -175,6 +177,29 @@ export default function OrderDetailScreen() {
 
     return () => clearInterval(timer);
   }, [order]);
+
+  // Add new function to open Google Maps with directions
+  const handleGetDirections = () => {
+    if (!order?.user.latitude || !order?.user.longitude) {
+      if (Platform.OS === 'web') {
+        alert('User location is not available');
+      } else {
+        Alert.alert(
+          'No Location',
+          'This user has not provided their location.'
+        );
+      }
+      return;
+    }
+
+    const url = Platform.select({
+      ios: `maps://app?saddr=Current+Location&daddr=${order.user.latitude},${order.user.longitude}`,
+      android: `google.navigation:q=${order.user.latitude},${order.user.longitude}`,
+      default: `https://www.google.com/maps/dir/?api=1&destination=${order.user.latitude},${order.user.longitude}`,
+    });
+
+    Linking.openURL(url);
+  };
 
   const isDeadlinePassed = (deadlineString?: string) => {
     if (!deadlineString) return false;
@@ -450,6 +475,30 @@ export default function OrderDetailScreen() {
                 <View style={styles.infoItem}>
                   <Text style={styles.infoLabel}>Floor:</Text>
                   <Text style={styles.infoValue}>{order.user.floor}</Text>
+                </View>
+              )}
+
+              {/* Add address if available */}
+              {order.user.address && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Address:</Text>
+                  <Text style={styles.infoValue}>{order.user.address}</Text>
+                </View>
+              )}
+
+              {/* Add map directions button if location is available */}
+              {order.user.latitude && order.user.longitude && (
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoLabel}>Location:</Text>
+                  <View style={styles.phoneContainer}>
+                    <Text style={styles.infoValue}>Get directions</Text>
+                    <TouchableOpacity
+                      style={styles.mapButton}
+                      onPress={handleGetDirections}
+                    >
+                      <Map size={16} color={colors.card} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
             </View>
@@ -744,5 +793,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fonts.semiBold,
     color: colors.success,
+  },
+  mapButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.success,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
   },
 });

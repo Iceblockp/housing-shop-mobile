@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ActivityIndicator,
-  SafeAreaView,
-} from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Header } from '@/components/shared/Header';
 import { Container } from '@/components/shared/Container';
@@ -17,6 +11,7 @@ import {
   useBestSellingProducts,
   useNewProducts,
 } from '@/hooks/use-products';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProductsScreen() {
   const { type } = useLocalSearchParams<{ type: string }>();

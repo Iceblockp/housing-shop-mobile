@@ -39,6 +39,8 @@ export const colors = {
   disabled: '#CBD5E1',
 
   gray: '#737373',
+  lightGray: '#E5E7EB',
+  white: '#fff', // Add this line with your desired light gray color
 };
 
 // Status colors mapping

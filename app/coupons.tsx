@@ -60,6 +60,7 @@ export default function CouponsScreen() {
         ]
       );
     } catch (error) {
+      console.log('error is', error);
       Alert.alert(
         'Error',
         error instanceof Error ? error.message : 'Failed to combine coupons'
@@ -80,7 +81,7 @@ export default function CouponsScreen() {
     >
       <View style={styles.couponHeader}>
         <View style={styles.couponIconContainer}>
-          <Ticket size={24} color={colors.primary} />
+          <Ticket size={24} color={colors.white} />
         </View>
         <View style={styles.couponInfo}>
           <Text style={styles.couponCode}>{item.code}</Text>

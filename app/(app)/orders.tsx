@@ -6,12 +6,9 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
 import { Container } from '@/components/shared/Container';
-import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
 import { OrderItem } from '@/components/orders/OrderItem';
-import { orderApi } from '@/lib/api';
 import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import { useAuth } from '@/lib/auth/auth-provider';

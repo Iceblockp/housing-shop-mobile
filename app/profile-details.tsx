@@ -30,6 +30,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ProfileDetailsScreen() {
   const { user, updateUser } = useAuth();
   const queryClient = useQueryClient();
+  console.log('user is', user);
 
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || '');

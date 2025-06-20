@@ -45,25 +45,11 @@ export const useUserCoupons = (params: CouponsQueryParams = {}) => {
 // Add a new function to combine multiple coupons
 export const useCombineCoupons = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (couponIds: string[]) => {
-      // Add the combineCoupons function to the couponApi in api.ts if not already there
-      const response = await fetch('/api/coupons/combine', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // The Authorization header will be added by the axios interceptor
-        },
-        body: JSON.stringify({ couponIds }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to combine coupons');
-      }
-      
-      return response.json();
+      // Use the couponApi instead of direct fetch
+      return await couponApi.combineCoupons(couponIds);
     },
     onSuccess: () => {
       // Invalidate the coupons query to refetch the updated list

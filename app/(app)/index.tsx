@@ -4,11 +4,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import { ShoppingBag } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import PromoCarousel from '@/components/home/PromoCarousel';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import CategoriesSection from '@/components/home/CategoriesSection';

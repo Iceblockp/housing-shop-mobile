@@ -20,6 +20,7 @@ import { orderApi } from '@/lib/api';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NotiBell } from '@/components/shared/NotiBell';
+import { useAuth } from '@/lib/auth/auth-provider'; // Import useAuth hook
 
 export default function CartScreen() {
   const insets = useSafeAreaInsets();
@@ -28,6 +29,7 @@ export default function CartScreen() {
   const [couponCode, setCouponCode] = useState(''); // Add state for coupon code
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice } =
     useCartStore();
+  const { user } = useAuth(); // Get user data from auth context
 
   // Add this line to get access to the query client
   const queryClient = useQueryClient();
@@ -123,6 +125,32 @@ export default function CartScreen() {
         Alert.alert(
           'Empty Cart',
           'Your cart is empty. Add some items before placing an order.'
+        );
+      }
+      return;
+    }
+
+    // Check if user has a phone number
+    if (!user?.phone) {
+      if (Platform.OS === 'web') {
+        if (
+          confirm(
+            'Please add your phone number to continue. Go to profile details?'
+          )
+        ) {
+          router.push('/profile-details');
+        }
+      } else {
+        Alert.alert(
+          'Phone Number Required',
+          'Please add your phone number so the admin can contact you about your order.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Go to Profile',
+              onPress: () => router.push('/profile-details'),
+            },
+          ]
         );
       }
       return;
