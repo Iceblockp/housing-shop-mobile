@@ -62,6 +62,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "versionCode": 1,
+      "jsEngine": "hermes",
+      "proguardRules": "proguard-rules.pro",
       "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     }
   }
