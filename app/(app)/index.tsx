@@ -20,9 +20,11 @@ import {
   useNewProducts,
 } from '@/hooks/use-products';
 import { NotiBell } from '@/components/shared/NotiBell';
+import { useNotification } from '@/lib/context/notificationsContext';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { notification, expoPushToken, error } = useNotification();
   const { data: featureProducts } = useFeaturedProducts();
   const { data: newProducts } = useNewProducts();
   const { data: bestProducts } = useBestSellingProducts();
@@ -41,6 +43,7 @@ export default function HomeScreen() {
       return 'Good Night';
     }
   }, []);
+  console.log('access', expoPushToken);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +51,8 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.greeting}>{greeting}</Text>
           <Text style={styles.locationText}>
-            Delivery to <Text style={styles.locationHighlight}>Home</Text>
+            Delivery to{' '}
+            <Text style={styles.locationHighlight}>Home{expoPushToken}</Text>
           </Text>
         </View>
 

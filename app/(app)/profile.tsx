@@ -22,6 +22,7 @@ import {
   Ticket,
   User as UserIcon,
   MailQuestion,
+  Info,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth/auth-provider';
@@ -117,6 +118,13 @@ export default function ProfileScreen() {
             title="My Coupons"
             onPress={() => {
               isAdmin ? router.push('/admin/coupons') : router.push('/coupons');
+            }}
+          />
+          <MenuOption
+            icon={<Info size={20} color="#1E40AF" />}
+            title="About"
+            onPress={() => {
+              router.push('/about');
             }}
           />
         </View>

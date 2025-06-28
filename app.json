@@ -44,7 +44,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow home_shop to use your location."
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
@@ -64,7 +65,8 @@
       "versionCode": 1,
       "jsEngine": "hermes",
       "proguardRules": "proguard-rules.pro",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "googleServicesFile": "./google-services.json"
     }
   }
 }
