@@ -43,7 +43,6 @@ export default function HomeScreen() {
       return 'Good Night';
     }
   }, []);
-  console.log('access', expoPushToken);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,8 +50,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.greeting}>{greeting}</Text>
           <Text style={styles.locationText}>
-            Delivery to{' '}
-            <Text style={styles.locationHighlight}>Home{expoPushToken}</Text>
+            Delivery to <Text style={styles.locationHighlight}>Home</Text>
           </Text>
         </View>
 
