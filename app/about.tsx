@@ -31,13 +31,13 @@ const about = (props: Props) => {
   const handleContactPress = (type: 'email' | 'phone' | 'website') => {
     switch (type) {
       case 'email':
-        Linking.openURL('mailto:info@homeshop.com');
+        Linking.openURL('mailto:phonyo126@gmail.com');
         break;
       case 'phone':
-        Linking.openURL('tel:+95912345678');
+        Linking.openURL('tel:+959 425743536');
         break;
       case 'website':
-        Linking.openURL('https://homeshop.com');
+        Linking.openURL('https://housing-online-shop-gray.vercel.app/');
         break;
     }
   };
