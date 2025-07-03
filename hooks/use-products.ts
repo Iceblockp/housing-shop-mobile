@@ -166,3 +166,68 @@ export const useNewProducts = () => {
     gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };
+
+// Create a new product (admin only)
+export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      description?: string;
+      price: number;
+      categoryId: string;
+      imageUrl?: string;
+      inStock?: boolean;
+    }) => {
+      const response = await productApi.create(data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+// Update an existing product (admin only)
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        name: string;
+        description?: string;
+        price: number;
+        categoryId: string;
+        imageUrl?: string;
+        inStock?: boolean;
+      };
+    }) => {
+      const response = await productApi.update(id, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+// Delete a product (admin only)
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await productApi.delete(id);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};

@@ -29,12 +29,11 @@ interface PromoItem {
 
 const initialPromo: Event[] = [
   {
-    id: '1',
-    title: 'Fresh Summer Fruits',
-    description: '25% off on all tropical fruits',
+    id: '15443',
+    title: 'No more Event',
+    description: 'Thank You for shopping!',
     isActive: true,
-    imageUrl:
-      'https://images.pexels.com/photos/1128678/pexels-photo-1128678.jpeg',
+    imageUrl: '',
     createdAt: '2023-08-17T14:30:00Z',
     updatedAt: '2023-08-14T12:00:00Z',
   },
@@ -46,14 +45,15 @@ const PromoCarousel: React.FC = () => {
   const scrollX = useSharedValue(0);
   const { data: events } = useActiveEvents();
 
-  const promos = events?.events ? events.events : initialPromo;
+  const promos = events?.events
+    ? [...events.events, ...initialPromo]
+    : initialPromo;
 
   // Auto scroll functionality
   useEffect(() => {
     const timer = setInterval(() => {
-      const nextIndex =
-        (activeIndex + 1) % Math.max(events?.events?.length || 1, 1);
-      flatListRef.current?.scrollToIndex({
+      const nextIndex = (activeIndex + 1) % Math.max(promos.length || 1, 1);
+      flatListRef?.current?.scrollToIndex({
         index: nextIndex,
         animated: true,
       });

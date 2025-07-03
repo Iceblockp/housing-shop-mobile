@@ -2,9 +2,9 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
-// const baseURL = 'http://localhost:3000/api';
+// export const baseURL = 'http://localhost:3000/api';
 // const baseURL = 'https://housing-online-shop.vercel.app/api';
-const baseURL = 'https://housing-online-shop-gray.vercel.app/api';
+export const baseURL = 'https://housing-online-shop-gray.vercel.app/api';
 
 // Create an axios instance with the base URL
 const api = axios.create({
@@ -250,6 +250,39 @@ export const eventApi = {
     const response = await api.get('/events/active', { params });
     return response.data;
   },
+  getAll: async (params?: { limit?: number; page?: number }) => {
+    const response = await api.get('/events', { params });
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await api.get(`/events/${id}`);
+    return response.data;
+  },
+  create: async (data: {
+    title: string;
+    description?: string;
+    imageUrl?: string;
+    isActive?: boolean;
+  }) => {
+    const response = await api.post('/events', data);
+    return response.data;
+  },
+  update: async (
+    id: string,
+    data: {
+      title?: string;
+      description?: string;
+      imageUrl?: string;
+      isActive?: boolean;
+    }
+  ) => {
+    const response = await api.patch(`/events/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/events/${id}`);
+    return response.data;
+  },
 };
 
 // API functions for coupons
@@ -285,6 +318,26 @@ export const couponApi = {
     userId?: string;
   }) => {
     const response = await api.post('/coupons', data);
+    return response.data;
+  },
+};
+
+// API functions for admin analytics
+export const adminApi = {
+  getAnalytics: async (filter?: {
+    filterType: 'all' | 'date' | 'month';
+    filterValue?: string;
+  }) => {
+    const params: Record<string, string> = {};
+
+    if (filter) {
+      params.filterType = filter.filterType;
+      if (filter.filterValue) {
+        params.filterValue = filter.filterValue;
+      }
+    }
+
+    const response = await api.get('/admin/analytics', { params });
     return response.data;
   },
 };

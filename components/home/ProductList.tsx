@@ -53,7 +53,7 @@ export function ProductList({
 
   // Render footer loader
   const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
+    if (!isFetchingNextPage) return <View style={{ height: 100 }} />;
     return (
       <View style={styles.footerLoader}>
         <ActivityIndicator size="small" color={colors.primary} />
@@ -94,6 +94,7 @@ export function ProductList({
         keyExtractor={(item) => item.id}
         ListHeaderComponent={header}
         numColumns={2}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
         renderItem={({ item }) => <ProductCard product={item} />}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true} // Enable scrolling

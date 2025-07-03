@@ -18,11 +18,11 @@ import { colors } from '@/constants/colors';
 import { fonts } from '@/constants/fonts';
 import * as SecureStore from 'expo-secure-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNativeGoogleSignIn } from '@/components/ui/useNativeGoogleSignIn';
+// import { useNativeGoogleSignIn } from '@/components/ui/useNativeGoogleSignIn';
 
 export default function LoginScreen() {
   const { login, isLoading } = useAuth();
-  const { signIn, loading } = useNativeGoogleSignIn();
+  // const { signIn, loading } = useNativeGoogleSignIn();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -104,7 +104,7 @@ export default function LoginScreen() {
             </Button>
           </View>
           <View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={signIn}
               disabled={loading}
               style={{
@@ -138,7 +138,7 @@ export default function LoginScreen() {
               >
                 Google login
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <View style={styles.footerContainer}>

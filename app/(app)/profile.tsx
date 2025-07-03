@@ -23,6 +23,10 @@ import {
   User as UserIcon,
   MailQuestion,
   Info,
+  BarChart4,
+  Tags,
+  Calendar,
+  ShoppingBasket,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth/auth-provider';
@@ -129,21 +133,32 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {/* <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
+        {isAdmin && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Admin</Text>
 
-          <MenuOption
-            icon={<Settings size={20} color="#1E40AF" />}
-            title="App Settings"
-            onPress={() => {}}
-          />
-
-          <MenuOption
-            icon={<HelpCircle size={20} color="#1E40AF" />}
-            title="Help & Support"
-            onPress={() => {}}
-          />
-        </View> */}
+            <MenuOption
+              icon={<ShoppingBasket size={20} color="#1E40AF" />}
+              title="Product Management"
+              onPress={() => router.push('/admin/products')}
+            />
+            <MenuOption
+              icon={<Tags size={20} color="#1E40AF" />}
+              title="Category Management"
+              onPress={() => router.push('/admin/categories')}
+            />
+            <MenuOption
+              icon={<Calendar size={20} color="#1E40AF" />}
+              title="Events Management"
+              onPress={() => router.push('/admin/events')}
+            />
+            <MenuOption
+              icon={<BarChart4 size={20} color="#1E40AF" />}
+              title="Analytics"
+              onPress={() => router.push('/admin/analytics')}
+            />
+          </View>
+        )}
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <LogOut size={20} color="#EF4444" />
